@@ -6,6 +6,10 @@
 # This script will install Odoo on your Ubuntu 16.04 server. It can install multiple Odoo instances
 # in one Ubuntu because of the different xmlrpc_ports
 #-------------------------------------------------------------------------------
+# Configure locales:
+# export LC_ALL="en_US.UTF-8"
+# export LC_CTYPE="en_US.UTF-8"
+# sudo dpkg-reconfigure locales
 # Make a new file:
 # sudo nano odoo-install.sh
 # Place this content in it and then make the file executable:

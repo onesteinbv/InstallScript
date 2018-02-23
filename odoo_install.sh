@@ -6,6 +6,10 @@
 # This script will install Odoo on your Ubuntu 14.04 server. It can install multiple Odoo instances
 # in one Ubuntu because of the different xmlrpc_ports
 #-------------------------------------------------------------------------------
+# Configure locales:
+# export LC_ALL="en_US.UTF-8"
+# export LC_CTYPE="en_US.UTF-8"
+# sudo dpkg-reconfigure locales
 # Make a new file:
 # sudo nano odoo-install.sh
 # Place this content in it and then make the file executable:
@@ -17,8 +21,8 @@
 ##fixed parameters
 #odoo
 OE_USER="odoo"
-OE_HOME="/$OE_USER"
-OE_HOME_EXT="/$OE_USER/$OE_USER-server"
+OE_HOME="/opt/$OE_USER"
+OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 #The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
 #Set to true if you want to install it, false if you don't need it or have it already installed.
 INSTALL_WKHTMLTOPDF="True"
@@ -43,8 +47,11 @@ sudo apt-get upgrade -y
 # Install PostgreSQL Server
 #--------------------------------------------------
 echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt-get install postgresql -y
-	
+sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install postgresql-9.6 -y
+
 echo -e "\n---- PostgreSQL $PG_VERSION Settings  ----"
 sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.3/main/postgresql.conf
 

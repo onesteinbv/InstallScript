@@ -128,7 +128,7 @@ sudo chmod 755 $OE_HOME_EXT/start.sh
 echo -e "* Create init file"
 echo '#!/bin/sh' >> ~/$OE_CONFIG
 echo '### BEGIN INIT INFO' >> ~/$OE_CONFIG
-echo '# Provides: $OE_CONFIG' >> ~/$OE_CONFIG
+echo '# Provides: odoo-server' >> ~/$OE_CONFIG
 echo '# Required-Start: $remote_fs $syslog' >> ~/$OE_CONFIG
 echo '# Required-Stop: $remote_fs $syslog' >> ~/$OE_CONFIG
 echo '# Should-Start: $network' >> ~/$OE_CONFIG

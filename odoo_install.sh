@@ -80,7 +80,7 @@ sudo pip3 install setuptools
 pip install wheel
 sudo apt-get install python3-dev 
 
-sudo pip3 install pypdf2 Babel passlib Werkzeug decorator python-dateutil pyyaml psycopg2 psutil html2text docutils lxml pillow reportlab ninja2 requests gdata XlsxWriter vobject python-openid pyparsing pydot mock mako Jinja2 ebaysdk feedparser xlwt psycogreen suds-jurko pytz pyusb greenlet xlrd GeoIP phonenumbers gevent pysftp unidecode
+sudo pip3 install pypdf2 Babel passlib Werkzeug decorator python-dateutil pyyaml psycopg2 psutil html2text docutils lxml pillow reportlab ninja2 requests gdata XlsxWriter vobject python-openid pyparsing pydot mock mako Jinja2 ebaysdk feedparser xlwt psycogreen suds-jurko pytz pyusb greenlet xlrd GeoIP phonenumbers gevent pysftp unidecode vatnumber
 
 echo -e "\n---- Install python libraries ----"
 # This is for compatibility with Ubuntu 16.04. Will work on 14.04, 15.04 and 16.04

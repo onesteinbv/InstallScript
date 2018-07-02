@@ -8,7 +8,7 @@ This script can be safely used in a multi-odoo code base server because the defa
 
 ##### 1. Download the script:
 ```
-sudo wget https://raw.githubusercontent.com/Yenthe666/InstallScript/11.0/odoo_install.sh
+sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/11_os/odoo_install.sh
 ```
 ##### 2. Modify the parameters as you wish.
 There are a few things you can configure, this is the most used list:<br/>
@@ -25,5 +25,8 @@ sudo chmod +x odoo_install.sh
 ```
 ##### 4. Execute the script:
 ```
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+sudo dpkg-reconfigure locales
 sudo ./odoo_install.sh
 ```

@@ -15,7 +15,7 @@
 # Place this content in it and then make the file executable:
 # sudo chmod +x odoo_install.sh
 # Execute the script to install Odoo:
-# ./odoo_install
+# ./odoo_install.sh
 ################################################################################
 
 ##fixed parameters

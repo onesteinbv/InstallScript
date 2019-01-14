@@ -8,7 +8,7 @@ This script can be safely used in a multi-odoo code base server because the defa
 
 ##### 1. Download the script:
 ```
-sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/11_os/odoo_install.sh
+sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/11_os_18.04/odoo_install.sh
 ```
 ##### 2. Modify the parameters as you wish.
 There are a few things you can configure, this is the most used list:<br/>

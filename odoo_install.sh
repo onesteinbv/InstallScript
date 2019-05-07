@@ -49,8 +49,8 @@ WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
-sudo apt-get update
-sudo apt-get upgrade -y
+sudo apt update
+sudo apt upgrade -y
 
 #--------------------------------------------------
 # Install PostgreSQL Server
@@ -58,8 +58,8 @@ sudo apt-get upgrade -y
 echo -e "\n---- Install PostgreSQL Server ----"
 sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install postgresql-10.7 -y
+sudo apt update
+sudo apt install postgresql-10.7 -y
 
 echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
@@ -68,28 +68,28 @@ sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 # Install Dependencies
 #--------------------------------------------------
 echo -e "\n--- Installing Python 3 + pip3 --"
-sudo apt-get install python3 python3-pip -y
+sudo apt install python3 python3-pip -y
 
 echo -e "\n---- Install tool packages ----"
-sudo apt-get install wget git bzr python-pip gdebi-core -y
+sudo apt install wget git bzr python-pip gdebi-core -y
 
 echo -e "\n---- Install python packages ----"
-sudo apt-get install libssl-dev libffi-dev python-pypdf2 python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 libgeoip-dev python-decorator python-requests python-passlib python-pil libgeoip-dev python3-stdnum -y
+sudo apt install libssl-dev libffi-dev python-pypdf2 python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 libgeoip-dev python-decorator python-requests python-passlib python-pil libgeoip-dev python3-stdnum -y
 
 sudo pip3 install setuptools
 pip install wheel
-sudo apt-get install python3-dev 
+sudo apt install python3-dev 
 
 sudo pip3 install pygments pypdf2 Babel passlib Werkzeug decorator python-dateutil pyyaml psycopg2-binary psutil html2text docutils lxml pillow reportlab ninja2 requests gdata XlsxWriter vobject python-openid pyparsing pydot mock mako Jinja2 ebaysdk feedparser xlwt psycogreen suds-jurko pytz pyusb greenlet xlrd GeoIP phonenumbers gevent pysftp unidecode vatnumber num2words openupgradelib libsass
 
 echo -e "\n---- Install python libraries ----"
 # This is for compatibility with Ubuntu 16.04. Will work on 14.04, 15.04 and 16.04
-sudo apt-get install python3-suds
+sudo apt install python3-suds
 
 echo -e "\n--- Install other required packages"
-sudo apt-get install node-clean-css -y
-sudo apt-get install node-less -y
-sudo apt-get install python-gevent -y
+sudo apt install node-clean-css -y
+sudo apt install node-less -y
+sudo apt install python-gevent -y
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
@@ -146,7 +146,7 @@ if [ $IS_ENTERPRISE = "True" ]; then
     echo -e "\n---- Added Enterprise code under $OE_HOME/enterprise/addons ----"
     echo -e "\n---- Installing Enterprise specific libraries ----"
     sudo pip3 install ofxparse
-    sudo apt-get install nodejs npm
+    sudo apt install nodejs npm
     sudo npm install -g less
     sudo npm install -g less-plugin-clean-css
 fi

@@ -49,6 +49,7 @@ WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
+sudo add-apt-repository universe
 sudo apt update
 sudo apt upgrade -y
 

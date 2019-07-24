@@ -2,3 +2,6 @@
 *.swp
 *.tmp
 *.bak
+
+# Pycharm
+.idea

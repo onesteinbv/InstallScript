@@ -3,13 +3,9 @@
 # Script for installing Odoo on Ubuntu 14.04, 15.04, 16.04 and 18.04 (could be used for other version too)
 # Author: Yenthe Van Ginneken
 #-------------------------------------------------------------------------------
-# This script will install Odoo on your Ubuntu 16.04 server. It can install multiple Odoo instances
+# This script will install Odoo on your Ubuntu 18.04 server. It can install multiple Odoo instances
 # in one Ubuntu because of the different xmlrpc_ports
 #-------------------------------------------------------------------------------
-# Configure locales:
-# export LC_ALL="en_US.UTF-8"
-# export LC_CTYPE="en_US.UTF-8"
-# sudo dpkg-reconfigure locales
 # Make a new file:
 # sudo nano odoo-install.sh
 # Place this content in it and then make the file executable:
@@ -18,46 +14,47 @@
 # ./odoo_install.sh
 ################################################################################
 
-##fixed parameters
-#odoo
 OE_USER="odoo"
 OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/${OE_USER}-server"
-#The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
-#Set to true if you want to install it, false if you don't need it or have it already installed.
+# The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
+# Set to true if you want to install it, false if you don't need it or have it already installed.
 INSTALL_WKHTMLTOPDF="True"
-#Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
+# Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
 OE_PORT="8069"
-#Choose the Odoo version which you want to install. For example: 12.0, 11.0, 10.0, 9.0 or saas-18. When using 'master' the master version will be installed.
-#IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 11.0
+# Choose the Odoo version which you want to install. For example: 12.0, 11.0, 10.0 or saas-18. When using 'master' the master version will be installed.
+# IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 12.0
 OE_VERSION="12.0"
-# Set this to True if you want to install Odoo 11 Enterprise!
+# Set this to True if you want to install the Odoo enterprise version!
 IS_ENTERPRISE="False"
-#set the superadmin password
+# set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
 
 ##
 ###  WKHTMLTOPDF download links
-## === Ubuntu Trusty x64 & x32 === (for other distributions please replace these two links,
-## in order to have correct version of wkhtmltox installed, for a danger note refer to 
-## https://www.odoo.com/documentation/8.0/setup/install.html#deb ):
-WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_amd64.deb
-WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_i386.deb
+## === Ubuntu Bionic Beaver x64 & x32 === (for other distributions please replace these two links,
+## in order to have correct version of wkhtmltox installed, for a danger note refer to
+## https://www.odoo.com/documentation/12.0/setup/install.html#deb-package ):
+WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_i386.deb
 
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
+# universe package is for Ubuntu 18.x
 sudo add-apt-repository universe
-sudo apt update
+# libpng12-0 dependency for wkhtmltopdf
+sudo add-apt-repository "deb http://mirrors.kernel.org/ubuntu/ bionic main"
+sudo apt update -y
 sudo apt upgrade -y
 
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
 echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt-get install postgresql -y
+sudo apt install postgresql -y
 
 echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
@@ -68,32 +65,23 @@ sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 echo -e "\n--- Installing Python 3 + pip3 --"
 sudo apt install python3 python3-pip -y
 
-echo -e "\n---- Install tool packages ----"
-sudo apt install wget git bzr python-pip gdebi-core -y
+echo -e "\n---- Install packages ----"
+sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python3-stdnum -y
+sudo apt install git build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less gdebi -y
 
-echo -e "\n---- Install python packages ----"
-sudo apt install libssl-dev libffi-dev python-pypdf2 python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 libgeoip-dev python-decorator python-requests python-passlib python-pil libgeoip-dev python3-stdnum -y
+echo -e "\n---- Install python packages/requirements ----"
+sudo pip3 install -r https://github.com/odoo/odoo/raw/${OE_VERSION}/requirements.txt
+sudo pip3 install pygments pyyaml psycopg2-binary ninja2 gdata python-openid psycogreen GeoIP phonenumbers pysftp unidecode openupgradelib
 
-sudo pip3 install setuptools
-pip install wheel
-sudo apt install python3-dev 
-
-sudo pip3 install pygments pypdf2 Babel passlib Werkzeug decorator python-dateutil pyyaml psycopg2-binary psutil html2text docutils lxml pillow reportlab ninja2 requests gdata XlsxWriter vobject python-openid pyparsing pydot mock mako Jinja2 ebaysdk feedparser xlwt psycogreen suds-jurko pytz pyusb greenlet xlrd GeoIP phonenumbers gevent pysftp unidecode vatnumber num2words openupgradelib libsass
-
-echo -e "\n---- Install python libraries ----"
-# This is for compatibility with Ubuntu 16.04. Will work on 14.04, 15.04 and 16.04
-sudo apt install python3-suds
-
-echo -e "\n--- Install other required packages"
-sudo apt install node-clean-css -y
-sudo apt install node-less -y
-sudo apt install python-gevent -y
+echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
+sudo apt install nodejs npm -y
+sudo npm install -g rtlcss
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
 #--------------------------------------------------
 if [ $INSTALL_WKHTMLTOPDF = "True" ]; then
-  echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 11 ----"
+  echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 12 ----"
   #pick up correct one from x64 & x32 versions:
   if [ "`getconf LONG_BIT`" == "64" ];then
       _url=$WKHTMLTOX_X64
@@ -121,7 +109,7 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
-sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
+sudo git clone --depth 1 --branch $OE_VERSION https://github.com/odoo/odoo $OE_HOME_EXT/
 
 if [ $IS_ENTERPRISE = "True" ]; then
     # Odoo Enterprise install!
@@ -143,8 +131,7 @@ if [ $IS_ENTERPRISE = "True" ]; then
 
     echo -e "\n---- Added Enterprise code under $OE_HOME/enterprise/addons ----"
     echo -e "\n---- Installing Enterprise specific libraries ----"
-    sudo pip3 install ofxparse
-    sudo apt install nodejs npm
+    sudo pip3 install num2words ofxparse
     sudo npm install -g less
     sudo npm install -g less-plugin-clean-css
 fi

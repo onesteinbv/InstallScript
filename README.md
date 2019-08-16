@@ -11,7 +11,8 @@ This script can be safely used in a multi-odoo code base server because the defa
 You have to enable universe category which contains python-pip package.
 Open /etc/apt/sources.list using an editor, for example nano:
 
-```sudo nano /etc/apt/sources.list
+```
+sudo nano /etc/apt/sources.list
 ```
 
 then add  universe at the end of each line, like this:

@@ -6,6 +6,27 @@ This script can be safely used in a multi-odoo code base server because the defa
 
 ## Installation procedure
 
+##### 0. Enable universe category
+
+You have to enable universe category which contains python-pip package.
+Open /etc/apt/sources.list using an editor, for example nano:
+
+```sudo nano /etc/apt/sources.list
+```
+
+then add  universe at the end of each line, like this:
+
+```
+deb http://archive.ubuntu.com/ubuntu bionic main universe
+deb http://archive.ubuntu.com/ubuntu bionic-security main universe 
+deb http://archive.ubuntu.com/ubuntu bionic-updates main universe
+````
+then run:
+
+```
+sudo apt update
+```
+
 ##### 1. Download the script:
 ```
 sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/12_os_18.04/odoo_install.sh

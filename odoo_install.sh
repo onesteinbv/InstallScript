@@ -31,6 +31,15 @@ IS_ENTERPRISE="False"
 # set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
+INSTALL_NGINX="False"
+DOMAIN=""
+
+if [[ $INSTALL_NGINX == "True" ]]; then
+    if [[ -z $DOMAIN ]]; then
+        echo -e "No domain provided"
+        exit 1
+    fi
+fi
 
 ##
 ###  WKHTMLTOPDF download links
@@ -153,6 +162,11 @@ if [ $IS_ENTERPRISE = "True" ]; then
 else
     sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
 fi
+
+if [ $INSTALL_NGINX = "True" ]; then
+    sudo su root -c "printf 'proxy_mode=True\n' >> /etc/${OE_CONFIG}.conf"
+fi
+
 sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
 sudo chmod 640 /etc/${OE_CONFIG}.conf
 
@@ -253,3 +267,24 @@ echo "Start Odoo service: sudo service $OE_CONFIG start"
 echo "Stop Odoo service: sudo service $OE_CONFIG stop"
 echo "Restart Odoo service: sudo service $OE_CONFIG restart"
 echo "-----------------------------------------------------------"
+
+if [[ $INSTALL_NGINX == "True" ]]; then
+    echo -e "\n==== Installing NGINX ===="
+    sudo apt install nginx
+    sed -i "s/{DOMAIN}/$DOMAIN/g" nginx
+    sudo cp nginx /etc/nginx/sites-available/odoo 
+    sudo rm /etc/nginx/sites-enabled/default
+    sudo ln -s /etc/nginx/sites-available/odoo /etc/nginx/sites-enabled/odoo
+
+    echo -e "\n---- SSL certificate ----"
+    sudo apt install software-properties-common -y
+    sudo add-apt-repository universe -y
+    sudo add-apt-repository ppa:certbot/certbot -y
+    sudo apt update
+
+    sudo apt install certbot
+    sudo certbot certonly --standalone --preferred-challenges http -d $DOMAIN -n --agree-tos --email info@onestein.nl
+    
+    sudo service nginx restart
+    echo -e "\n Done installing NGINX";
+fi

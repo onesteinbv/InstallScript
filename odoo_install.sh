@@ -33,10 +33,11 @@ OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
 INSTALL_NGINX="False"
 DOMAIN=""
+EMAIL=""
 
 if [[ $INSTALL_NGINX == "True" ]]; then
-    if [[ -z $DOMAIN ]]; then
-        echo -e "No domain provided"
+    if [ -z $DOMAIN ] || [ -z $EMAIL ]; then
+        echo -e "No domain and email provided"
         exit 1
     fi
 fi
@@ -281,10 +282,12 @@ if [[ $INSTALL_NGINX == "True" ]]; then
     sudo add-apt-repository universe -y
     sudo add-apt-repository ppa:certbot/certbot -y
     sudo apt update
+    
+    sudo service nginx stop
 
     sudo apt install certbot
-    sudo certbot certonly --standalone --preferred-challenges http -d $DOMAIN -n --agree-tos --email info@onestein.nl
+    sudo certbot certonly --standalone --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
     
-    sudo service nginx restart
+    sudo service nginx start
     echo -e "\n Done installing NGINX";
 fi

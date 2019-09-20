@@ -271,6 +271,9 @@ echo "-----------------------------------------------------------"
 
 if [[ $INSTALL_NGINX == "True" ]]; then
     echo -e "\n==== Installing NGINX ===="
+
+    sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/12_os_18.04/nginx
+
     sudo apt install nginx
     sed -i "s/{DOMAIN}/$DOMAIN/g" nginx
     sudo cp nginx /etc/nginx/sites-available/odoo 

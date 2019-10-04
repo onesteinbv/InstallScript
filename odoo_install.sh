@@ -285,12 +285,10 @@ if [[ $INSTALL_NGINX == "True" ]]; then
     sudo add-apt-repository universe -y
     sudo add-apt-repository ppa:certbot/certbot -y
     sudo apt update
-    
-    sudo service nginx stop
 
-    sudo apt install certbot
-    sudo certbot certonly --standalone --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
+    sudo apt install certbot python-certbot-nginx
+    sudo certbot certonly --nginx --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
     
-    sudo service nginx start
+    sudo service nginx reload
     echo -e "\n Done installing NGINX";
 fi

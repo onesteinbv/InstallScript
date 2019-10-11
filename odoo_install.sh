@@ -275,10 +275,6 @@ if [[ $INSTALL_NGINX == "True" ]]; then
     sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/12_os_18.04/nginx
 
     sudo apt install nginx
-    sed -i "s/{DOMAIN}/$DOMAIN/g" nginx
-    sudo cp nginx /etc/nginx/sites-available/odoo 
-    sudo rm /etc/nginx/sites-enabled/default
-    sudo ln -s /etc/nginx/sites-available/odoo /etc/nginx/sites-enabled/odoo
 
     echo -e "\n---- SSL certificate ----"
     sudo apt install software-properties-common -y
@@ -288,7 +284,13 @@ if [[ $INSTALL_NGINX == "True" ]]; then
 
     sudo apt install certbot python-certbot-nginx
     sudo certbot certonly --nginx --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
-    
+
+    echo -e "\n---- Configurating NGINX ----"
+    sed -i "s/{DOMAIN}/$DOMAIN/g" nginx
+    sudo cp nginx /etc/nginx/sites-available/odoo 
+    sudo rm /etc/nginx/sites-enabled/default
+    sudo ln -s /etc/nginx/sites-available/odoo /etc/nginx/sites-enabled/odoo
+
     sudo service nginx reload
     echo -e "\n Done installing NGINX";
 fi

@@ -35,6 +35,8 @@ INSTALL_NGINX="False"
 DOMAIN=""
 EMAIL=""
 
+INSTALL_POSTGRES="True"
+
 if [[ $INSTALL_NGINX == "True" ]]; then
     if [ -z $DOMAIN ] || [ -z $EMAIL ]; then
         echo -e "No domain and email provided"
@@ -60,11 +62,13 @@ sudo apt upgrade -y
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
-echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt install postgresql -y
+if [[ $INSTALL_POSTGRES == "True" ]]; then
+    echo -e "\n---- Install PostgreSQL Server ----"
+    sudo apt install postgresql -y
 
-echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
-sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
+    echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
+    sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
+fi
 
 #--------------------------------------------------
 # Install Dependencies

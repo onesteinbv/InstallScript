@@ -71,24 +71,6 @@ if [[ $INSTALL_POSTGRES == "True" ]]; then
 fi
 
 #--------------------------------------------------
-# Install Dependencies
-#--------------------------------------------------
-echo -e "\n--- Installing Python 3 + pip3 --"
-sudo apt install python3 python3-pip -y
-
-echo -e "\n---- Install packages ----"
-sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python3-stdnum -y
-sudo apt install git build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less gdebi -y
-
-echo -e "\n---- Install python packages/requirements ----"
-sudo pip3 install -r https://github.com/odoo/odoo/raw/${OE_VERSION}/requirements.txt
-sudo pip3 install pygments pyyaml psycopg2-binary ninja2 gdata python-openid psycogreen GeoIP phonenumbers pysftp unidecode openupgradelib
-
-echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
-sudo apt install nodejs npm -y
-sudo npm install -g rtlcss
-
-#--------------------------------------------------
 # Install Wkhtmltopdf if needed
 #--------------------------------------------------
 if [ $INSTALL_WKHTMLTOPDF = "True" ]; then
@@ -111,6 +93,31 @@ echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 #The user should also be added to the sudo'ers group.
 sudo adduser $OE_USER sudo
+
+#--------------------------------------------------
+# Install apt packages
+#--------------------------------------------------
+echo -e "\n--- Installing Python 3 + pip3 --"
+sudo apt install python3 python3-pip -y
+
+echo -e "\n---- Install packages ----"
+sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python3-stdnum -y
+sudo apt install git build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less gdebi -y
+
+echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
+sudo apt install nodejs npm -y
+sudo npm install -g rtlcss
+
+#--------------------------------------------------
+# Install venv
+#--------------------------------------------------
+
+echo -e "\n---- Create venv ----"
+sudo su odoo -c "python3 -m venv $OE_HOME/venv"
+
+echo -e "\n---- Install python packages/requirements ----"
+sudo $OE_HOME/venv/bin/python3 -m pip install -r https://github.com/odoo/odoo/raw/$OE_VERSION/requirements.txt
+sudo $OE_HOME/venv/bin/python3 -m pip install pygments pyyaml psycopg2-binary ninja2 gdata python-openid psycogreen GeoIP phonenumbers pysftp unidecode openupgradelib
 
 echo -e "\n---- Create Log directory ----"
 sudo mkdir /var/log/$OE_USER
@@ -142,7 +149,7 @@ if [ $IS_ENTERPRISE = "True" ]; then
 
     echo -e "\n---- Added Enterprise code under $OE_HOME/enterprise/addons ----"
     echo -e "\n---- Installing Enterprise specific libraries ----"
-    sudo pip3 install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
+    sudo $OE_HOME/venv/bin/python3 -m pip install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
     sudo npm install -g less
     sudo npm install -g less-plugin-clean-css
 fi

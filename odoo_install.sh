@@ -170,6 +170,7 @@ fi
 
 if [ $INSTALL_NGINX = "True" ]; then
     sudo su root -c "printf 'proxy_mode=True\n' >> /etc/${OE_CONFIG}.conf"
+    sudo su root -c "printf 'xmlrpc_interface = 127.0.0.1\n' >> /etc/${OE_CONFIG}.conf"
 fi
 
 sudo su root -c "printf 'max_cron_threads=1\n' >> /etc/${OE_CONFIG}.conf"

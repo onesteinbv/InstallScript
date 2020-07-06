@@ -276,7 +276,7 @@ if [[ $INSTALL_NGINX == "True" ]]; then
 
     sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/12_os_18.04/nginx
 
-    sudo apt install nginx
+    sudo apt install nginx -y
 
     echo -e "\n---- SSL certificate ----"
     sudo apt install software-properties-common -y
@@ -284,7 +284,7 @@ if [[ $INSTALL_NGINX == "True" ]]; then
     sudo add-apt-repository ppa:certbot/certbot -y
     sudo apt update
 
-    sudo apt install certbot python-certbot-nginx
+    sudo apt install certbot python-certbot-nginx -y
     sudo certbot certonly --nginx --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
 
     echo -e "\n---- Configurating NGINX ----"

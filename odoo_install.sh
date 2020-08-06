@@ -1,76 +1,92 @@
 #!/bin/bash
 ################################################################################
-# Script for installing Odoo V9 on Ubuntu 14.04 LTS (could be used for other version too)
+# Script for installing Odoo V9 on Ubuntu 18.04
 # Author: Yenthe Van Ginneken
+# Modified by: Onestein
 #-------------------------------------------------------------------------------
-# This script will install Odoo on your Ubuntu 14.04 server. It can install multiple Odoo instances
+# This script will install Odoo on your Ubuntu 18.04 server. It can install multiple Odoo instances
 # in one Ubuntu because of the different xmlrpc_ports
 #-------------------------------------------------------------------------------
 # Make a new file:
 # sudo nano odoo-install.sh
 # Place this content in it and then make the file executable:
-# sudo chmod +x odoo-install.sh
+# sudo chmod +x odoo_install.sh
 # Execute the script to install Odoo:
-# ./odoo-install
+# ./odoo_install.sh
 ################################################################################
- 
-##fixed parameters
-#odoo
+
 OE_USER="odoo"
-OE_HOME="/$OE_USER"
-OE_HOME_EXT="/$OE_USER/${OE_USER}-server"
-#The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
-#Set to true if you want to install it, false if you don't need it or have it already installed.
+OE_HOME="/opt/$OE_USER"
+OE_HOME_EXT="/opt/$OE_USER/${OE_USER}-server"
+# The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
+# Set to true if you want to install it, false if you don't need it or have it already installed.
 INSTALL_WKHTMLTOPDF="True"
-#Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
+# Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
 OE_PORT="8069"
-#Choose the Odoo version which you want to install. For example: 9.0, 8.0, 7.0 or saas-6. When using 'trunk' the master version will be installed.
-#IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 9.0
+# Choose the Odoo version which you want to install. For example: 13.0, 12.0, 11.0 or saas-18. When using 'master' the master version will be installed.
+# IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 9.0
 OE_VERSION="9.0"
-#set the superadmin password
+# Set this to True if you want to install the Odoo enterprise version!
+IS_ENTERPRISE="False"
+# set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
+INSTALL_NGINX="False"
+DOMAIN=""
+EMAIL=""
+
+INSTALL_POSTGRES="True"
+
+if [[ $INSTALL_NGINX == "True" ]]; then
+    if [ -z $DOMAIN ] || [ -z $EMAIL ]; then
+        echo -e "No domain and email provided"
+        exit 1
+    fi
+fi
 
 ##
 ###  WKHTMLTOPDF download links
-## === Ubuntu Trusty x64 & x32 === (for other distributions please replace these two links,
-## in order to have correct version of wkhtmltox installed, for a danger note refer to 
-## https://www.odoo.com/documentation/8.0/setup/install.html#deb ):
-WKHTMLTOX_X64=https://downloads.wkhtmltopdf.org/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
-WKHTMLTOX_X32=https://downloads.wkhtmltopdf.org/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-i386.deb
+## === Ubuntu Bionic Beaver x64 & x32 === (for other distributions please replace these two links,
+## in order to have correct version of wkhtmltox installed, for a danger note refer to
+## https://github.com/odoo/odoo/wiki/Wkhtmltopdf ):
+# WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+# WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_i386.deb
 
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
-sudo apt-get update
-sudo apt-get upgrade -y
+sudo apt update -y
+sudo apt upgrade -y
 
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
-echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt-get install postgresql -y
+if [[ $INSTALL_POSTGRES == "True" ]]; then
+    echo -e "\n---- Install PostgreSQL Server ----"
+    sudo apt install postgresql -y
 
-echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
-sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
+    echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
+    sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
+fi
 
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
-echo -e "\n---- Install tool packages ----"
-sudo apt-get install wget subversion git bzr bzrtools python-pip gdebi-core -y
-	
-echo -e "\n---- Install python packages ----"
-sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf python-decorator python-requests python-passlib python-pil -y
-	
-echo -e "\n---- Install python libraries ----"
-sudo pip install gdata psycogreen ofxparse
+echo -e "\n--- Installing Python 2 + pip --"
+sudo apt install python python-pip -y
 
-echo -e "\n--- Install other required packages"
-sudo apt-get install node-clean-css -y
-sudo apt-get install node-less -y
-sudo apt-get install python-gevent -y
+echo -e "\n---- Install packages ----"
+sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python-stdnum -y
+sudo apt install git build-essential wget python-dev python-venv python-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python-setuptools node-less gdebi -y
+
+echo -e "\n---- Install python packages/requirements ----"
+sudo pip install -r https://github.com/odoo/odoo/raw/${OE_VERSION}/requirements.txt
+sudo pip install pygments pyyaml psycopg2-binary ninja2 gdata python-openid psycogreen GeoIP phonenumbers pysftp unidecode openupgradelib
+
+echo -e "\n---- Installing nodeJS NPM and rtlcss for LTR support ----"
+sudo apt install nodejs npm -y
+sudo npm install -g rtlcss
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
@@ -104,7 +120,32 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
-sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
+sudo git clone --depth 1 --branch $OE_VERSION https://github.com/odoo/odoo $OE_HOME_EXT/
+
+if [ $IS_ENTERPRISE = "True" ]; then
+    # Odoo Enterprise install!
+    echo -e "\n--- Create symlink for node"
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
+    sudo su $OE_USER -c "mkdir $OE_HOME/enterprise"
+    sudo su $OE_USER -c "mkdir $OE_HOME/enterprise/addons"
+
+    GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
+    while [[ $GITHUB_RESPONSE == *"Authentication"* ]]; do
+        echo "------------------------WARNING------------------------------"
+        echo "Your authentication with Github has failed! Please try again."
+        printf "In order to clone and install the Odoo enterprise version you \nneed to be an offical Odoo partner and you need access to\nhttp://github.com/odoo/enterprise.\n"
+        echo "TIP: Press ctrl+c to stop this script."
+        echo "-------------------------------------------------------------"
+        echo " "
+        GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
+    done
+
+    echo -e "\n---- Added Enterprise code under $OE_HOME/enterprise/addons ----"
+    echo -e "\n---- Installing Enterprise specific libraries ----"
+    sudo pip install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
+    sudo npm install -g less
+    sudo npm install -g less-plugin-clean-css
+fi
 
 echo -e "\n---- Create custom module directory ----"
 sudo su $OE_USER -c "mkdir $OE_HOME/custom"
@@ -114,15 +155,28 @@ echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 
 echo -e "* Create server config file"
-sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/${OE_CONFIG}.conf
+
+sudo touch /etc/${OE_CONFIG}.conf
+echo -e "* Creating server config file"
+sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'http_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
+if [ $IS_ENTERPRISE = "True" ]; then
+    sudo su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons\n' >> /etc/${OE_CONFIG}.conf"
+else
+    sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/${OE_CONFIG}.conf"
+fi
+
+if [ $INSTALL_NGINX = "True" ]; then
+    sudo su root -c "printf 'proxy_mode=True\n' >> /etc/${OE_CONFIG}.conf"
+    sudo su root -c "printf 'xmlrpc_interface = 127.0.0.1\n' >> /etc/${OE_CONFIG}.conf"
+fi
+
+sudo su root -c "printf 'max_cron_threads=1\n' >> /etc/${OE_CONFIG}.conf"
+
 sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
 sudo chmod 640 /etc/${OE_CONFIG}.conf
-
-echo -e "* Change server config file"
-sudo sed -i s/"db_user = .*"/"db_user = $OE_USER"/g /etc/${OE_CONFIG}.conf
-sudo sed -i s/"; admin_passwd.*"/"admin_passwd = $OE_SUPERADMIN"/g /etc/${OE_CONFIG}.conf
-sudo su root -c "echo 'logfile = /var/log/$OE_USER/$OE_CONFIG$1.log' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "echo 'addons_path=$OE_HOME_EXT/addons,$OE_HOME/custom/addons' >> /etc/${OE_CONFIG}.conf"
 
 echo -e "* Create startup file"
 sudo su root -c "echo '#!/bin/sh' >> $OE_HOME_EXT/start.sh"
@@ -212,9 +266,6 @@ sudo mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
 sudo chmod 755 /etc/init.d/$OE_CONFIG
 sudo chown root: /etc/init.d/$OE_CONFIG
 
-echo -e "* Change default xmlrpc port"
-sudo su root -c "echo 'xmlrpc_port = $OE_PORT' >> /etc/${OE_CONFIG}.conf"
-
 echo -e "* Start ODOO on Startup"
 sudo update-rc.d $OE_CONFIG defaults
 
@@ -231,3 +282,29 @@ echo "Start Odoo service: sudo service $OE_CONFIG start"
 echo "Stop Odoo service: sudo service $OE_CONFIG stop"
 echo "Restart Odoo service: sudo service $OE_CONFIG restart"
 echo "-----------------------------------------------------------"
+
+if [[ $INSTALL_NGINX == "True" ]]; then
+    echo -e "\n==== Installing NGINX ===="
+
+    sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/9_os_18.04/nginx
+
+    sudo apt install nginx -y
+
+    echo -e "\n---- SSL certificate ----"
+    sudo apt install software-properties-common -y
+    sudo add-apt-repository universe -y
+    sudo add-apt-repository ppa:certbot/certbot -y
+    sudo apt update
+
+    sudo apt install certbot python-certbot-nginx -y
+    sudo certbot certonly --nginx --preferred-challenges http -d $DOMAIN -n --agree-tos --email $EMAIL
+
+    echo -e "\n---- Configurating NGINX ----"
+    sed -i "s/{DOMAIN}/$DOMAIN/g" nginx
+    sudo cp nginx /etc/nginx/sites-available/odoo
+    sudo rm /etc/nginx/sites-enabled/default
+    sudo ln -s /etc/nginx/sites-available/odoo /etc/nginx/sites-enabled/odoo
+
+    sudo service nginx reload
+    echo -e "\n Done installing NGINX";
+fi

@@ -49,8 +49,8 @@ fi
 ## === Ubuntu Bionic Beaver x64 & x32 === (for other distributions please replace these two links,
 ## in order to have correct version of wkhtmltox installed, for a danger note refer to
 ## https://github.com/odoo/odoo/wiki/Wkhtmltopdf ):
-# WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
-# WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_i386.deb
+WKHTMLTOX_X64=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+WKHTMLTOX_X32=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_i386.deb
 
 #--------------------------------------------------
 # Update Server
@@ -62,7 +62,7 @@ sudo apt upgrade -y
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
-if [[ $INSTALL_POSTGRES == "True" ]]; then
+if [ $INSTALL_POSTGRES == "True" ]; then
     echo -e "\n---- Install PostgreSQL Server ----"
     sudo apt install postgresql -y
 
@@ -78,7 +78,8 @@ sudo apt install python python-pip -y
 
 echo -e "\n---- Install packages ----"
 sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python-stdnum -y
-sudo apt install git build-essential wget python-dev python-venv python-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python-setuptools node-less gdebi -y
+sudo apt install git build-essential wget python-dev python-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python-setuptools node-less gdebi -y
+sudo apt install libjpeg8-dev zlib1g-dev
 
 echo -e "\n---- Install python packages/requirements ----"
 sudo pip install -r https://github.com/odoo/odoo/raw/${OE_VERSION}/requirements.txt
@@ -94,7 +95,7 @@ sudo npm install -g rtlcss
 if [ $INSTALL_WKHTMLTOPDF = "True" ]; then
   echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 9 ----"
   #pick up correct one from x64 & x32 versions:
-  if [ "`getconf LONG_BIT`" == "64" ];then
+  if [ "`getconf LONG_BIT`" == "64" ]; then
       _url=$WKHTMLTOX_X64
   else
       _url=$WKHTMLTOX_X32

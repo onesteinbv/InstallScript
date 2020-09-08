@@ -67,7 +67,7 @@ echo -e "\n---- Install python packages ----"
 sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-decorator python-requests python-passlib python-pil -y python-suds
 
 echo -e "\n---- Install python libraries ----"
-sudo pip install gdata psycogreen ofxparse XlsxWriter xlrd pybabel pyPdf
+sudo pip install gdata psycogreen ofxparse XlsxWriter xlrd Babel pyPdf
 
 echo -e "\n--- Install other required packages"
 sudo apt-get install node-clean-css -y

@@ -6,7 +6,7 @@ This script can be safely used in a multi-odoo code base server because the defa
 1. Download the script:
 
 ```
-sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/tree/10_os_18.04/odoo_install.sh
+sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/10_os_18.04/odoo_install.sh
 ```
 
 2. Make the script executable:

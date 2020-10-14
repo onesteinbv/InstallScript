@@ -30,7 +30,7 @@ sudo apt update
 
 ##### 1. Download the script:
 ```
-sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/13_os_18.04/odoo_install.sh
+sudo wget https://raw.githubusercontent.com/onesteinbv/InstallScript/13_os_20.04/odoo_install.sh
 ```
 ##### 2. Modify the parameters as you wish.
 There are a few things you can configure, this is the most used list:<br/>

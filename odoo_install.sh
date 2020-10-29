@@ -77,7 +77,7 @@ echo -e "\n--- Installing Python 3 + pip3 --"
 sudo apt install python3 python3-pip -y
 
 echo -e "\n---- Install packages ----"
-sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-zsi python-unittest2 libgeoip-dev python3-stdnum -y
+sudo apt install libssl-dev libffi-dev python-libxslt1 python-openid python-pychart python-simplejson python-webdav python-yaml python-unittest2 libgeoip-dev python3-stdnum -y
 sudo apt install git build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less gdebi -y
 
 echo -e "\n---- Install python packages/requirements ----"
